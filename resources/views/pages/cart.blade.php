@@ -6,10 +6,16 @@
             {{ session('message') }}
         </div>
     @endif
-    <section class="grid grid-cols-1 lg:grid-cols-2 mt-4 gap-x-6">
+    <section class="grid grid-cols-1 {{ $cartItems ? 'lg:grid-cols-2' : '' }} mt-4 gap-x-6">
         <div>
-            @if ($cartItems->isEmpty())
-                <p>Keranjang kosong.</p>
+            @if (!$cartItems)
+                <div class="flex flex-col w-4/12 mx-auto">
+                    <img src="{{ asset('empty.svg') }}"/>
+                    <p class="text-center mt-2">Kamu Belum memiliki kelas</p>
+                    <x-filament::link href="{{ route('index',) }}" class="block mt-4 py-2 font-bold bg-blue-50 rounded-lg">
+                        <span class="w-full">Eksplor kelas sekarang</span>
+                    </x-filament::link>
+                </div>
             @else
                 <ul>
                     @foreach ($cartItems as $cartItem)
@@ -35,19 +41,22 @@
                 </ul>
             @endif
         </div>
-        <div class="p-4 bg-white border w-full lg:w-6/12 ml-auto rounded-xl">
-            <h5 class="text-lg font-medium">Rincian Order</h5>
-            <div class="flex flex-row items-center justify-between mt-4">
-                <p class="text-gray-600">Total item</p>
-                <p>{{ $counted }}</p>
-            </div>
-            <div class="flex flex-row items-center justify-between mt-2">
-                <p class="text-gray-600">Total harga</p>
-                <p class="font-bold text-green-600">Rp {{ number_format($total, 0, ',', '.') }}</p>
-            </div>
-            <button id="pay-button" class="py-2 bg-black rounded-md text-white w-full mt-4">Bayar Sekarang</button>
+        @if (!$cartItems)
 
-        </div>
+        @else
+            <div class="p-4 bg-white border w-full lg:w-6/12 ml-auto rounded-xl h-fit">
+                <h5 class="text-lg font-medium">Rincian Order</h5>
+                <div class="flex flex-row items-center justify-between mt-4">
+                    <p class="text-gray-600">Total item</p>
+                    <p>{{ $counted }}</p>
+                </div>
+                <div class="flex flex-row items-center justify-between mt-2">
+                    <p class="text-gray-600">Total harga</p>
+                    <p class="font-bold text-green-600">Rp {{ number_format($total, 0, ',', '.') }}</p>
+                </div>
+                <button id="pay-button" class="py-2 bg-black rounded-md text-white w-full mt-4">Bayar Sekarang</button>
+            </div>
+        @endif
     </section>
     <script type="text/javascript"
             src="https://app.sandbox.midtrans.com/snap/snap.js"

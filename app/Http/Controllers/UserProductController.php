@@ -17,7 +17,12 @@ class UserProductController extends Controller
     public function detail($id)
     {
         $user = Auth::user();
-
+        if (!$user) {
+            // Kamu bisa mengarahkan ke halaman login atau menampilkan pesan error
+            return redirect()
+                ->route("filament.course.auth.login")
+                ->with("error", "Anda harus login terlebih dahulu.");
+        }
         // Ambil data kursus dan sub-kursusnya
         $courses = Course::where("id", $id)
             ->with([
@@ -26,6 +31,12 @@ class UserProductController extends Controller
                 },
             ])
             ->first();
+
+        // Cek jika $courses tidak ditemukan
+        if (!$courses) {
+            // Kamu bisa mengarahkan ke halaman 404 atau menampilkan pesan error
+            abort(404, "Kursus tidak ditemukan.");
+        }
 
         // Cek apakah kursus ini sudah dibayar oleh user
         $isPaid = Checkout::where("user_id", $user->id)

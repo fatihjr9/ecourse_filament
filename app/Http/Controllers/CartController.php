@@ -57,7 +57,16 @@ class CartController extends Controller
         if (!$userId) {
             return redirect()->route("filament.course.auth.login");
         }
-
+        if ($cartItems->isEmpty()) {
+            // Kirim pesan bahwa cart kosong ke view
+            return view("pages.cart", [
+                "cartItems" => [],
+                "counted" => 0,
+                "total" => 0,
+                "snapToken" => null,
+                "message" => "Keranjang belanja anda kosong.",
+            ]);
+        }
         $cart = Cart::where("user_id", $userId)->get();
 
         if ($cart->isEmpty()) {
